@@ -1,3 +1,23 @@
+const fs = require('fs');
+const path = require('path');
+
+const productsFilePath = path.join(__dirname, '../data/productsDataBase.json');
+const products = JSON.parse(fs.readFileSync(productsFilePath, 'utf-8'));
+
+const toThousand = n => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+const newProduct = products.filter(function(product){
+    return product.status == "new"
+});
+//const bicycles
+//const bamboocycles
+//const rollerskate
+//const skateboard
+//const accessories
+const inSale = products.filter(function(product){
+    return product.category == 'in-sale'
+});
+
 const productList = [
     {
         id:1,
@@ -34,27 +54,23 @@ const productList = [
     
 ];
 
-
-
 const indexController = {
     index: (req, res) => {
-        res.render('index', {productList: productList});
+        res.render('index', {newProduct, toThousand});
     },
     login: (req, res) =>{
         res.render('login');
     },
-    details: (req, res) => {
-        let product = productList.find(product => product.id == req.params.id);
-        console.log(product);
-        res.render('productDetail', {product:product});
+    register: (req, res) =>{
+        res.render('register');
     },
-    create: (req, res) =>{
-        let newProduct = {
-            nombre: req.body.name,
-            model: req.body.model
-        }
-        console.log(req.body)
-        res.render('createProduct');
+    productCar: (req, res) =>{
+        res.render('productCart');
+    },
+    search: (req, res) => {
+        let search = req.query.keywords;
+        let productsToSearch = products.filter(product => product.name.toLowerCase().includes(search));
+        res.render('results', {products: productsToSearch, search})
     }
 };
 
